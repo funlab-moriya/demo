@@ -1,0 +1,14 @@
+services:
+  demo:
+    image: sb-app  # 使用するDockerイメージの名前
+    build:
+      context: .  # Dockerfile のあるディレクトリを指定
+      dockerfile: demo/Dockerfile  # ビルドに使うDockerfileのパス
+    ports:
+      - "8081:8080"  # ホストの8081ポートをコンテナの8080ポートにマッピング
+    volumes:
+      - ./demo:/app:cached  # ローカルのソースコードをコンテナにマウント（ホットリロード対応）
+      - ~/.m2:/root/.m2  # Maven のキャッシュを共有（ビルド時間短縮。Mavenのキャッシュは以前のビルドで取得したライブラリを再利用するための仕組みです）
+    environment:
+      - JAVA_OPTS=-Dspring.devtools.restart.enabled=true -Dspring.devtools.livereload.enabled=true  # ホットリロードを有効化
+    command: mvn spring-boot:run  # Spring Boot の開発用サーバーを起動
